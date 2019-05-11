@@ -1,5 +1,6 @@
 package org.dcomte.poc;
 
+import lombok.Data;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -11,10 +12,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Objects;
 
+@Data
 public class CommonConfiguration extends FieldConfiguration {
     private final File configurationFile;
-    protected String sheetName;
-    protected String eventCode;
+    protected final String sheetName;
+    protected final String eventCode;
 
     public CommonConfiguration(File file) throws IOException, NoSuchMethodException {
         configurationFile = file;
@@ -58,28 +60,45 @@ public class CommonConfiguration extends FieldConfiguration {
                         String fieldName = row.getCell(0).getStringCellValue();
                         String eventCode = null;
                         if (!"".equals(fieldName)) {
-                            if(eventColumnIndex != -1) {
+                            if (eventColumnIndex != -1) {
                                 Cell eventCell = row.getCell(eventColumnIndex);
-                                if(eventCell != null) {
+                                if (eventCell != null) {
                                     eventCode = eventCell.getStringCellValue();
                                 }
                             }
                             Cell cell = row.getCell(valueColumnIndex);
                             Object fieldValue;
                             switch (cell.getCellTypeEnum()) {
+                                case NUMERIC:
+                                    fieldValue = cell.getNumericCellValue();
+                                    if (fieldValue.equals(1)) {
+                                        fieldValue = true;
+                                    } else if (fieldValue.equals(0)) {
+                                        fieldValue = false;
+                                    } else {
+                                        System.err.println("Unexpected value: '" + fieldValue + "', defaulting to FALSE");
+                                        fieldValue = false;
+                                    }
+                                    break;
                                 case BOOLEAN:
                                     fieldValue = cell.getBooleanCellValue();
                                     break;
-                                case NUMERIC:
-                                    fieldValue = cell.getNumericCellValue();
-                                    break;
                                 case STRING:
                                     fieldValue = cell.getStringCellValue();
+                                    if ("Y".equals(fieldValue)) {
+                                        fieldValue = true;
+                                    } else if ("N".equals(fieldValue)) {
+                                        fieldValue = false;
+                                    } else {
+                                        System.err.println("Unexpected value: '" + fieldValue + "', defaulting to FALSE");
+                                        fieldValue = false;
+                                    }
                                     break;
                                 default:
-                                    fieldValue = "";
+                                    /* default cell value to false if it's an unexpected value */
+                                    fieldValue = false;
                             }
-                            if(Objects.equals(eventCode, this.eventCode)) {
+                            if (Objects.equals(eventCode, this.eventCode)) {
                                 dynamicSetValue(fieldName, fieldValue);
                             }
                         }
@@ -88,5 +107,4 @@ public class CommonConfiguration extends FieldConfiguration {
             }
         }
     }
-
 }

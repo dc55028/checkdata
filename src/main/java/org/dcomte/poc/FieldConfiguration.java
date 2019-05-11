@@ -8,15 +8,15 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 @Data
-public abstract class FieldConfiguration {
-    String field1 = "N";
-    String field2 = "N";
-    String field3 = "N";
-    String field4 = "N";
-    String field5 = "N";
-    String field6 = "N";
-    String field7 = "N";
-    String lastField = "N";
+abstract class FieldConfiguration {
+    Boolean field1 = false;
+    Boolean field2 = false;
+    Boolean field3 = false;
+    Boolean  field4 = false;
+    Boolean  field5 = false;
+    Boolean  field6 = false;
+    Boolean  field7 = false;
+    Boolean  lastField = false;
 
     abstract void readConfiguration() throws IOException, NoSuchMethodException;
 

@@ -3,7 +3,7 @@ package org.dcomte.poc;
 import java.io.File;
 import java.io.IOException;
 
-public class ModuleConfiguration extends CommonConfiguration implements ConfigurationReader {
+class ModuleConfiguration extends CommonConfiguration {
 
     ModuleConfiguration(String moduleName, File file) throws IOException, NoSuchMethodException {
         super(file);

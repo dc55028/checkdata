@@ -16,13 +16,13 @@ class CommonConfigurationTest {
         assertTrue(conf.exists());
         CommonConfiguration inst = new CommonConfiguration(conf);
         assertNotNull(inst);
-        assertEquals("Y", inst.getField1());
-        assertEquals("N", inst.getField2());
-        assertEquals("N", inst.getField3());
-        assertEquals("N", inst.getField4());
-        assertEquals("N", inst.getField5());
-        assertEquals("N", inst.getField6());
-        assertEquals("N", inst.getField7());
-        assertEquals("N", inst.getLastField());
+        assertTrue(inst.getField1());
+        assertFalse(inst.getField2());
+        assertFalse(inst.getField3());
+        assertFalse(inst.getField4());
+        assertFalse(inst.getField5());
+        assertFalse(inst.getField6());
+        assertFalse(inst.getField7());
+        assertFalse(inst.getLastField());
     }
 }
