@@ -1,6 +1,7 @@
 package org.dcomte.poc;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -13,14 +14,16 @@ import java.io.IOException;
 import java.util.Objects;
 
 @Data
+@EqualsAndHashCode
 public class CommonConfiguration extends FieldConfiguration {
-    private final File configurationFile;
-    protected final String sheetName;
-    protected final String eventCode;
 
-    public CommonConfiguration(File file) throws IOException, NoSuchMethodException {
+    protected final File configurationFile;
+    protected final String eventCode;
+    protected String sheetName;
+
+    public CommonConfiguration(File file, String sheetName) throws IOException, NoSuchMethodException {
         configurationFile = file;
-        sheetName = "Common";
+        this.sheetName = sheetName;
         eventCode = null;
         readConfiguration();
     }
@@ -99,7 +102,7 @@ public class CommonConfiguration extends FieldConfiguration {
                                     fieldValue = false;
                             }
                             if (Objects.equals(eventCode, this.eventCode)) {
-                                dynamicSetValue(fieldName, fieldValue);
+                                setDynamicValue(fieldName, fieldValue);
                             }
                         }
                     }
