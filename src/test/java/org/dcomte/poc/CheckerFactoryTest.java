@@ -1,7 +1,7 @@
 package org.dcomte.poc;
 
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.filesystem.NotOLE2FileException;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ClassLoaderUtils;
@@ -13,48 +13,60 @@ import java.net.URL;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class ModuleConfigurationTest {
-    private String configFileName;
-    private File conf;
+class CheckerFactoryTest {
+    private CheckerFactory f;
 
     @BeforeEach
-    void setUp() {
-        configFileName = "CheckData.xlsx";
+    void setUp() throws NoSuchMethodException, IOException, InvalidFormatException {
+        String configFileName = "checkData.xlsx";
         URL resource = ClassLoaderUtils.getDefaultClassLoader().getResource(configFileName);
         assertNotNull(resource);
-        conf = new File(resource.getFile());
-        assertTrue(conf.exists());
+        f = new CheckerFactory(new File(resource.getFile()));
     }
 
     @Test
-    void testIncorrectFileThrowsException() {
-        configFileName = "incorrectWorkbook.xlsx";
+    void testIncorrectFileFormatThrowsException() {
+        String configFileName = "incorrectWorkbook.xlsx";
         URL resource = ClassLoaderUtils.getDefaultClassLoader().getResource(configFileName);
         assertNotNull(resource);
-        conf = new File(resource.getFile());
+        File conf = new File(resource.getFile());
         assertTrue(conf.exists());
-        assertThrows(NotOLE2FileException.class, () -> WorkbookFactory.create(conf));
+        assertThrows(NotOLE2FileException.class, () -> new CheckerFactory(conf));
     }
 
     @Test
     void testFileNotFound() {
-        assertThrows(FileNotFoundException.class, () -> {
-            @SuppressWarnings("unused")
-            ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(new File("something"), "MODULE1", "LEASECHG", "IT");
-        });
+        assertThrows(FileNotFoundException.class, () -> new CheckerFactory(new File("something")));
     }
 
     @Test
     void testIncorrectModuleName() {
         assertThrows(IllegalArgumentException.class, () -> {
             @SuppressWarnings("unused")
-            ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(conf, "Common", "LEASECHG", "IT");
+            FieldCheckerConfiguration inst = f.getChecker("Common", "LEASECHG", "IT", "T");
         });
     }
 
     @Test
-    void testFieldNoEventFilterNoCountryFilter() throws IOException, NoSuchMethodException {
-        ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(conf, "MODULE1", "LEASECHG", "SP");
+    void getCheckerTotal() {
+        FieldCheckerConfiguration checker = f.getChecker("Module1", "ASSET_DEP", "IT", "T");
+        assertNotNull(checker);
+        assertTrue(true);
+        assertTrue(checker.getField1());
+        assertTrue(checker.getField2());
+    }
+
+    @Test
+    void getCheckerDetail() {
+        FieldCheckerConfiguration checker = f.getChecker("Module1", "ASSET_DEP", "IT", "D");
+        assertNotNull(checker);
+        assertFalse(checker.getField1());
+        assertTrue(checker.getField2());
+    }
+
+    @Test
+    void testFieldNoEventFilterNoCountryFilter() {
+        FieldCheckerConfiguration inst = f.getChecker("MODULE1", "LEASECHG", "SP", "T");
         assertNotNull(inst);
         assertTrue(inst.getField1()); // always true
         assertTrue(inst.getField2());
@@ -64,8 +76,8 @@ class ModuleConfigurationTest {
     }
 
     @Test
-    void testFieldEventFilterNoCountryFilter() throws IOException, NoSuchMethodException {
-        ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(conf, "MODULE1", "ASSET_DEP", "SP");
+    void testFieldEventFilterNoCountryFilter() {
+        FieldCheckerConfiguration inst = f.getChecker("MODULE1", "ASSET_DEP", "SP", "T");
         assertNotNull(inst);
         assertTrue(inst.getField1()); // always true
         assertTrue(inst.getField2());
@@ -75,8 +87,8 @@ class ModuleConfigurationTest {
     }
 
     @Test
-    void testFieldEventFilterCountryFilter() throws IOException, NoSuchMethodException {
-        ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(conf, "MODULE1", "ASSET_THEFT", "IT");
+    void testFieldEventFilterCountryFilter() {
+        FieldCheckerConfiguration inst = f.getChecker("MODULE1", "ASSET_THEFT", "IT", "T");
         assertNotNull(inst);
         assertTrue(inst.getField1()); // always true
         assertTrue(inst.getField2());
@@ -86,27 +98,26 @@ class ModuleConfigurationTest {
     }
 
     @Test
-    void testFieldNoEventFilterCountryFilter() throws IOException, NoSuchMethodException {
-        ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(conf, "MODULE1", "ASSET_THEFT", "UK");
+    void testFieldNoEventFilterCountryFilter() {
+        FieldCheckerConfiguration inst = f.getChecker("MODULE1", "ASSET_THEFT", "UK", "T");
         assertNotNull(inst);
         assertTrue(inst.getField1()); // always true
         assertTrue(inst.getField2());
         assertFalse(inst.getField3());
         assertFalse(inst.getField4());
         assertTrue(inst.getField5());
-        inst = new ModuleCheckerConfiguration(conf, "MODULE1", "ASSET_THEFT", "SP");
+        inst = f.getChecker("MODULE1", "ASSET_THEFT", "SP", "T");
         assertNotNull(inst);
         assertTrue(inst.getField1()); // always true
         assertTrue(inst.getField2());
         assertFalse(inst.getField3());
         assertFalse(inst.getField4());
-        assertFalse(inst.getField5());
-
+        assertTrue(inst.getField5());
     }
 
     @Test
-    void testWeirdValues() throws IOException, NoSuchMethodException {
-        ModuleCheckerConfiguration inst = new ModuleCheckerConfiguration(conf, "MODULE2", "LEASECHG", "UK");
+    void testWeirdValues() {
+        FieldCheckerConfiguration inst = f.getChecker("MODULE2", "LEASECHG", "UK", "T");
         assertNotNull(inst);
         assertFalse(inst.getField1());
         assertTrue(inst.getField2());

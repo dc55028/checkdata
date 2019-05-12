@@ -12,13 +12,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Objects;
 
-class ModuleConfiguration extends FieldConfiguration {
+class ModuleCheckerConfiguration extends FieldCheckerConfiguration {
     private final File configurationFile;
     private String worksheetName;
     private String eventCode;
     private String countryCode;
 
-    ModuleConfiguration(File configFile, String moduleName, String event, String country) throws IOException, NoSuchMethodException {
+    ModuleCheckerConfiguration(File configFile, String moduleName, String event, String country) throws IOException, NoSuchMethodException {
         if(!configFile.exists()) {
             throw new FileNotFoundException(configFile.getAbsolutePath() + " not found");
         }
@@ -50,7 +50,7 @@ class ModuleConfiguration extends FieldConfiguration {
                     System.out.println("rownum: " + row.getRowNum());
                     if (row.getRowNum() == 0) {
                         assert ("Field Name".equals(row.getCell(0).getStringCellValue()));
-                        assert ("Mandatory".equals(row.getCell(1).getStringCellValue()));
+                        assert ("Total".equals(row.getCell(1).getStringCellValue()));
                     } else {
                         String fieldName = row.getCell(0).getStringCellValue();
                         if (!"".equals(fieldName)) {
@@ -83,7 +83,7 @@ class ModuleConfiguration extends FieldConfiguration {
                         assert ("Field Name".equals(row.getCell(0).getStringCellValue()));
                         assert ("Event Code".equals(row.getCell(eventColumn).getStringCellValue()));
                         assert ("Country".equals(row.getCell(countryColumn).getStringCellValue()));
-                        assert ("Mandatory".equals(row.getCell(valueColumn).getStringCellValue()));
+                        assert ("Total".equals(row.getCell(valueColumn).getStringCellValue()));
                     } else {
 
                         String fieldName = row.getCell(0).getStringCellValue();

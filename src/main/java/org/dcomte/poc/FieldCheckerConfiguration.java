@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
-class FieldConfiguration extends DynamicBooleanAccessorsImpl {
+class FieldCheckerConfiguration extends DynamicBooleanAccessorsImpl {
     Boolean field1 = false;
     Boolean field2 = false;
     Boolean field3 = false;
