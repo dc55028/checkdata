@@ -14,14 +14,18 @@ import java.net.URL;
 import static org.junit.jupiter.api.Assertions.*;
 
 class CheckerFactoryTest {
+    private String configFileName;
+    private File conf;
     private CheckerFactory f;
 
     @BeforeEach
     void setUp() throws NoSuchMethodException, IOException, InvalidFormatException {
-        String configFileName = "checkData.xlsx";
+        configFileName = "checkData.xlsx";
         URL resource = ClassLoaderUtils.getDefaultClassLoader().getResource(configFileName);
         assertNotNull(resource);
-        f = new CheckerFactory(new File(resource.getFile()));
+        conf = new File(resource.getFile());
+        assertTrue(conf.exists());
+        f = new CheckerFactory(conf);
     }
 
     @Test
