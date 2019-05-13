@@ -20,7 +20,7 @@ class CheckerFactoryTest {
 
     @BeforeEach
     void setUp() throws NoSuchMethodException, IOException, InvalidFormatException {
-        configFileName = "checkData.xlsx";
+        configFileName = "CheckData.xlsx";
         URL resource = ClassLoaderUtils.getDefaultClassLoader().getResource(configFileName);
         assertNotNull(resource);
         conf = new File(resource.getFile());
