@@ -41,5 +41,5 @@ jobs:
       - run: mvn integration-test
       
       # have test results displayed in CircleCI
-      - store_tests_results:
+      - store_test_results:
           path: target/surefire-reports
